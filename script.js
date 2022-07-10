@@ -11,7 +11,7 @@ const account1 = {
 };
 
 const account2 = {
-  owner: 'Jessica Davis',
+  owner: 'Shreyas Patil',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
@@ -34,6 +34,7 @@ const account4 = {
 const accounts = [account1, account2, account3, account4];
 
 // Elements
+const wrongPin = document.getElementById('wrong-pin');
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
 const labelBalance = document.querySelector('.balance__value');
@@ -72,7 +73,7 @@ const displayMovements = (movements) => {
 		const html = `
 			<div class="movements__row">
 				<div class="movements__type movements__type--${transaction}">${i + 1} ${transaction}</div>
-				<div class="movements__value">${movement}</div>
+				<div class="movements__value">${movement}€</div>
 	  		</div>
 		`;
 
@@ -80,5 +81,64 @@ const displayMovements = (movements) => {
 	})
 }
 
-displayMovements(account1.movements);
-// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const createUsernames = (accounts) => {
+	accounts.forEach(account => {
+		account.username = account.owner.toLowerCase().split(" ").map(name => name[0]).join('');
+	});
+};
+
+const calcPrintBalance = (movements) => {
+	const currBalance = movements.reduce((acc, curr) => acc + curr, 0);
+	labelBalance.textContent = `${currBalance}€`
+}
+
+const displaySummary = (account) => {
+	const { movements = [], interestRate = 0 } = account || {};
+	// deposits
+	const incomes = movements
+		.filter(movement => movement > 0)
+		.reduce((acc, curr) => acc + curr, 0);
+
+	labelSumIn.textContent = `${incomes}€`;
+
+	// withdrawals
+	const outcomes = movements
+		.filter(movement => movement < 0)
+		.reduce((acc, curr) => acc + curr, 0);
+
+	labelSumOut.textContent = `${Math.abs(outcomes)}€`;
+
+	// interests earned
+	const interest = movements
+		.filter(movement => movement > 0)
+		.map(deposit => (deposit * interestRate) / 100)
+		.filter(int => int > 1)
+		.reduce((acc, int) => acc + int, 0);
+
+	labelSumInterest.textContent = `${Math.abs(interest)}€`;
+}
+
+let currentAccount;
+
+btnLogin.addEventListener('click', (event) => {
+	event.preventDefault();
+	// find current logged in user
+	currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
+	if(currentAccount?.pin === +inputLoginPin.value) {
+		wrongPin.classList.add('hide');
+		// if user exists and pin matches, show the account info
+		labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`
+		displayMovements(currentAccount.movements);
+		calcPrintBalance(currentAccount.movements);
+		displaySummary(currentAccount);
+		containerApp.style.opacity = 100;
+
+		inputLoginUsername.value = inputLoginPin.value = '';
+		inputLoginPin.blur();
+	} else {
+		inputLoginPin.value = '';
+		wrongPin.classList.remove('hide');
+	}
+});
+
+createUsernames(accounts);
