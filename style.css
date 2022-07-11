@@ -299,3 +299,7 @@ h2 {
 .timer {
   font-weight: 600;
 }
+
+.error {
+	color: #f5465d;
+  }

@@ -35,7 +35,7 @@
         <button class="login__btn">&rarr;</button>
       </form>
 
-	  <p id="wrong-pin" class="summary__value--out hide">Wrong Password! Please try again...</p>
+	  <p id="wrong-pin" class="error hide" />
     </nav>
 
     <main class="app">
@@ -87,6 +87,9 @@
           <label class="form__label">Transfer to</label>
           <label class="form__label">Amount</label>
         </form>
+		<div>
+			<p id="not_enough_balance" class="error hide">Not enough money to transfer.</p>
+		</div>
       </div>
 
       <!-- OPERATION: LOAN -->
@@ -97,6 +100,9 @@
           <button class="form__btn form__btn--loan">&rarr;</button>
           <label class="form__label form__label--loan">Amount</label>
         </form>
+		<div>
+			<p id="invalid-loan" style="margin-top: -6px;" class="error hide" />
+		</div>
       </div>
 
       <!-- OPERATION: CLOSE -->
